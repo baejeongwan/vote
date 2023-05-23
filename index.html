@@ -1,0 +1,94 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset='utf-8'>
+        <meta name='viewport' content='width=device-width, initial-scale=1'>
+        <title>투표 / 뽑기 프로그램 - 준비중...</title>
+        <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
+        <link rel="stylesheet" href="./node_modules/bootstrap-icons/font/bootstrap-icons.css">
+        <link rel="stylesheet" href="./custom.css">
+    </head>
+    <body>
+        <div class='container'>
+            <div id="splash">
+                <h1 id="splash-title"></h1>
+                <p class="splash-loading-text d-none" id="splash-loading-text" style="text-align: center;">WELCOME</p>
+            </div>
+            <div id="setUpScreen" class="d-none">
+                <ul class="nav nav-tabs" id="typeTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="vote-tab" data-bs-toggle="tab" data-bs-target="#voteTabPane" type="button" role="tab" aria-controls="voteTabPane" aria-selected="true">투표</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="random-tab" data-bs-toggle="tab" data-bs-target="#randomTabPane" type="button" role="tab" aria-controls="randomTabPane" aria-selected="false">추첨</button>
+                    </li>
+                </ul>
+                <div class="tab-content" id="typeTabContent">
+                    <div class="tab-pane fade show active" id="voteTabPane" role="tabpanel" aria-labelledby="vote-tab" tabindex="0">
+                        <h1>투표모드</h1>
+                        <p>후보 / 선택지를 지정한뒤 투표를 합니다.</p>
+                        <label for="vote-name">투표명</label>
+                        <input type="text" id="vote-name" placeholder="투표명" class="form-control">
+                        <ul class="list-group mt-2" id="candidate-list-group"></ul>
+                        <div class="row">
+                            <div class="col-6">
+                                <label for="total-voters">투표할 총 인원수</label>
+                                <input type="number" id="total-voters" class="form-control" placeholder="투표할 인원수">
+                            </div>
+                            <!--
+                            <div class="col-6">
+                                <label for="total-voters">선택할 항목 개수</label>
+                                <input type="number" id="total-voters" class="form-control" placeholder="선택할 항목 개수">
+                            </div>
+                            -->
+                        </div>
+                        <button class="btn btn-primary btn-lg mt-2" onclick="createCandidate()">후보 / 선택지 추가</button>
+                        <button class="btn btn-primary btn-lg mt-2" onclick="startVote()">투표 시작</button>
+                        <button class="btn btn-danger btn-lg mt-2" onclick="resetCandidate()">리셋</button>
+                    </div>
+                    <div class="tab-pane fade" id="randomTabPane" role="tabpanel" aria-labelledby="random-tab" tabindex="0">
+                        <h1>추첨모드</h1>
+                        <p>후보 / 선택지중 추첨을 합니다.</p>
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <strong>결과값은 완전히 무작위로 생성되지 않습니다. <a href="javascript:void(0)" class="alert-link" onclick="showRandomIsNotRandomWarning()">더 알아보기 &raquo;</a></strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        <label for="random-name">추첨명</label>
+                        <input type="text" id="random-name" placeholder="추첨명" class="form-control">
+                        <ul class="list-group mt-2" id="possible-list-group"></ul>
+                        <button class="btn btn-primary btn-lg mt-2" onclick="createPossible()">후보 / 선택지 추가</button>
+                        <button class="btn btn-primary btn-lg mt-2" onclick="startRandom()">뽑기 시작</button>
+                        <button class="btn btn-danger btn-lg mt-2" onclick="resetPossible()">리셋</button>
+                    </div>
+                </div>
+            </div>
+            <div id="voteScreen" class="d-none">
+                <h1 id="vote-name-view">투표 진행중</h1>
+                <p class="vote-instruction">다음키를 눌러 투표하세요</p>
+                <ul id="keyPressGuide"></ul>
+            </div>
+            <div id="voteResultScreen" class="d-none">
+                <h1 id="vote-result-title"><span id="vote-result-name">투표</span> 결과</h1>
+                <table id="voteResultTableView"></table>
+                <div class="vote-result-action-btn">
+                    <button class="btn btn-primary btn-lg" onclick="saveVoteResult()">투표결과 저장하기</button>
+                    <button class="btn btn-danger btn-lg" onclick="window.externalfunctions.exitApp()">끝내기</button>
+                    <button class="btn btn-danger btn-lg" onclick="location.reload()">처음으로</button>
+                </div>
+            </div>
+            <div id="randomResultScreen" class="d-none">
+                <h1 id="random-result-title"><span id="random-result-name"></span> 추첨 결과</h1>
+                <h1 id="random-result-text"></h1>
+                <div class="random-result-action-btn">
+                    <button class="btn btn-primary btn-lg" onclick="doRandomAgainWithoutThis()">뽑힌 사람 제외하고 다시하기</button>
+                    <button class="btn btn-secondary btn-lg" onclick="doRandom()">다시 하기</button>
+                    <button class="btn btn-danger btn-lg" onclick="window.externalfunctions.exitApp()">끝내기</button>
+                    <button class="btn btn-danger btn-lg" onclick="location.reload()">처음으로</button>
+                </div>
+            </div>
+        </div>
+        <script src="./node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="./node_modules/sweetalert2/dist/sweetalert2.all.min.js"></script>
+        <script src="./renderer.js"></script>
+    </body>
+</html>

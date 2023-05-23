@@ -1,0 +1,79 @@
+.button-not-button {
+    border: 0px solid transparent;
+    background-color: transparent;
+}
+
+.button-not-button:hover {
+    opacity: 0.8;
+}
+
+#voteResultTableView {
+    border: 1px solid black;
+    position: relative;
+    left: 50%;
+    transform: translate(-50%, 0);
+}
+
+#voteResultTableView>tbody>tr {
+    border: 1px solid black;
+}
+
+#voteResultTableView>tbody>tr>td {
+    border: 1px solid black;
+    text-align: center;
+    font-size: xx-large;
+}
+
+#vote-name-view {
+    text-align: center;
+    font-size:3em;
+}
+
+.vote-instruction {
+    text-align: center;
+    font-size: 30pt;
+}
+
+#keyPressGuide>li {
+    font-size: 20pt;
+    text-align: center;
+}
+
+#vote-result-title {
+    text-align: center;
+    font-size: 3em;
+}
+
+#random-result-title {
+    text-align: center;
+    font-size: 3em;
+}
+
+.vote-result-action-btn {
+    width: 450px;
+    margin: 2% auto;
+}
+
+#splash>h1 {
+    position: relative;
+    text-align: center;
+    font-size: 4em;
+}
+
+.splash-loading-text {
+    animation: fadeinandout 1s linear 0s infinite;
+}
+
+@keyframes fadeinandout {
+    from {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
