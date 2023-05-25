@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset='utf-8'>
+        <meta name='viewport' content='width=device-width, initial-scale=1'>
+        <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'">
+        <title>설정</title>
+        <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css" />
+    </head>
+    <body>
+        <div class='container'>
+            <ul class="nav nav-underline" id="settingsTopTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link active" id="appearance-tab" data-bs-toggle="tab" data-bs-target="#appearance-tab-pane" type="button" role="tab" aria-controls="appearance-tab-pane" aria-selected="true">모양</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="update-tab" data-bs-toggle="tab" data-bs-target="#update-tab-pane" type="button" role="tab" aria-controls="update-tab-pane" aria-selected="false">업데이트</button>
+                </li>
+            </ul>
+            <div class="tab-content" id="settingsTopTabContent">
+                <div class="tab-pane fade show active" id="appearance-tab-pane" role="tabpanel" aria-labelledby="appearance-tab" tabindex="0">
+                    <h1>모양</h1>
+                    <p>개발자가 열심히 만들고 있어요! 잠깐만 기다려줘요.</p>
+                </div>
+                <div class="tab-pane fade" id="update-tab-pane" role="tabpanel" aria-labelledby="update-tab" tabindex="0">
+                    <h1>업데이트</h1>
+                    <p id="versionInfoText">현재 버전: </p>
+                    <button class="btn btn-primary" onclick="window.setting_link.checkForUpdates()">업데이트 확인</button>
+                    <i>최신 업데이트가 이미 있을경우 아무 알림도 표시되지 않습니다.</i>
+                </div>
+            </div>              
+        </div>
+        <script src="./node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+            window.setting_link.getVersion().then((ver) => {
+                document.getElementById("versionInfoText").innerHTML = `현재 버전: ${ver}`
+            })
+        </script>
+    </body>
+</html>
