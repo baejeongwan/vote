@@ -159,7 +159,7 @@ async function appupdatechecker() {
 
     autoUpdater.addListener("download-progress", (e) => {
         updtprogressbar.value = e.percent
-        updtprogressbar.detail = e.percent + " downloaded."
+        updtprogressbar.detail = e.percent + "% downloaded."
     })
 
     autoUpdater.addListener("update-downloaded", async () => {
