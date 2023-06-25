@@ -138,6 +138,7 @@ function keyboardHandler(e) {
                 numvoted += value.vote;
             })
             if (numvoted < totalvoters) {
+                document.getElementById("sndeffect").play()
                 Swal.fire({
                     title: "투표에 참여해주셔서 감사합니다.",
                     text: `현재 ${numvoted}명이 참여하였으며 앞으로 ${totalvoters - numvoted}명이 참여해야합니다.`,
@@ -184,7 +185,48 @@ function keyboardHandler(e) {
 
 function voteCompleteHandler() {
     console.log("ALL VOTE COMPLETE", candidateList)
+    document.getElementById("sndeffect").play()
     Swal.fire({
+        title: "투표 완료됨",
+        text: "다음 화면에서 결과가 공개됩니다.",
+        icon: "success"
+    }).then(
+        function () {
+            $("#voteResultScreen").classList.remove("d-none")
+            $("#voteScreen").classList.add("d-none")
+            $("#voteResultTableView").innerHTML = "<tr><td>후보 / 선택지 이름</td><td>득표수</td></tr>"
+            candidateList.forEach(function (value, index) {
+                $("#voteResultTableView").innerHTML += `<tr><td>${value.candidateName}</td><td>0</td></tr>`
+            })
+            let intervalRepeated = 1;
+            let resultinterval = setInterval(() => {
+                $("#voteResultTableView").innerHTML = "<tr><td>후보 / 선택지 이름</td><td>득표수</td></tr>"
+                console.log("PROCESSING CANDIDATES...")
+                let highest = 0;
+                let highestReq = [];
+                candidateList.forEach(function(value, index) {
+                    if (intervalRepeated <= value.vote) {
+                        $("#voteResultTableView").innerHTML += `<tr><td>${value.candidateName}</td><td>${intervalRepeated}</td></tr>`
+                        highest = value.vote
+                        highestReq.push(value.candidateName)
+                        console.log("PUSHED DATA TO HIGHESTREQ", highestReq)
+                    } else {
+                        $("#voteResultTableView").innerHTML += `<tr><td>${value.candidateName}</td><td>${value.vote}</td></tr>`
+                    }
+                })
+                if (intervalRepeated >= highest) {
+                    showResult(highestReq)
+                    console.log("VOTE OK",highestReq)
+                    clearInterval(resultinterval)
+                } else {
+                    highest = 0;
+                    highestReq = [];
+                }
+                intervalRepeated++;
+            }, 1000);
+        }
+    )
+    /*Swal.fire({
         title: "결과공개",
         html: "결과가 <b></b>초 뒤에 공개됩니다.",
         timer: 5000,
@@ -207,7 +249,29 @@ function voteCompleteHandler() {
             $("#voteResultTableView").innerHTML += `<tr><td>${value.candidateName}</td><td>${value.vote}</td></tr>`
         })
 
-    })
+    })*/
+}
+
+function showResult(highestReq) {
+    if (highestReq.length == 1) {
+        Swal.fire({
+            title: "최종 우승자",
+            html: "<h1>" + highestReq[0] +"</h1>"
+        })
+    } else {
+        let finalText = ""
+        highestReq.forEach((value, index) => {
+            if (index + 1 == highestReq.length) {
+                finalText += value
+                Swal.fire({
+                    title: "최종 우승자",
+                    html: "<h1>" + finalText + "</h1>"
+                })
+            } else {
+                finalText += value + ","
+            }
+        })
+    }
 }
 
 function saveVoteResult() {

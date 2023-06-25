@@ -62,12 +62,13 @@ app.on('window-all-closed', function () {
 //#region Menubar
 let appMenu = Menu.buildFromTemplate([
     {label: "파일", submenu: [
+        /* Temporary blocked
         {
             label: "설정",
             click: function () {
                 require('./additionalWindowLoader').createSettingsWindow()
             }
-        },
+        },*/
         {
             type: "separator"
         },
@@ -144,7 +145,7 @@ ipcMain.on("check-updates", function (e) {
 async function appupdatechecker() {
     let updtprogressbar
     autoUpdater.addListener("update-available", async (updateinfo) => {
-        let messageforupdate = `* 업데이트 알림 *\n최신 업데이트가 있습니다. 지금 설치하시겠습니까?\n\n===업데이트 정보===\n버전: ${updateinfo.version}\n업데이트 날짜:${updateinfo.releaseDate}\n업데이트 정보: ${updateinfo.releaseNotes}\n\n업데이트를 하면 잠시 다운로드가 진행됩니다.\n투표및 뽑기 프로그램은 언제나 안정성, 기능 강화등의 이유로 최신 버전 사용을 권장합니다.`
+        let messageforupdate = `* 업데이트 알림 *\n최신 업데이트가 있습니다. 지금 설치하시겠습니까?\n\n===업데이트 정보===\n버전: ${updateinfo.version}\n업데이트 날짜:${updateinfo.releaseDate}\n업데이트 정보: ${updateinfo.releaseNotes.replace(/<[^>]*>/g, '')}\n\n업데이트를 하면 잠시 다운로드가 진행됩니다.\n투표및 뽑기 프로그램은 언제나 안정성, 기능 강화등의 이유로 최신 버전 사용을 권장합니다.`
         let chosen = await dialog.showMessageBox(null, {title: "최신 업데이트", message: messageforupdate, buttons: ["예, 지금 설치하겠습니다.", "아니요, 다음번에 알려주세요."], type: "question"})
         if (chosen.response == 0) {
             updtprogressbar = new progressbar({
