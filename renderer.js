@@ -202,23 +202,34 @@ function voteCompleteHandler() {
             let resultinterval = setInterval(() => {
                 $("#voteResultTableView").innerHTML = "<tr><td>후보 / 선택지 이름</td><td>득표수</td></tr>"
                 console.log("PROCESSING CANDIDATES...")
-                let highest = 0;
                 let highestReq = [];
-                candidateList.forEach(function(value, index) {
-                    if (intervalRepeated <= value.vote) {
-                        $("#voteResultTableView").innerHTML += `<tr><td>${value.candidateName}</td><td>${intervalRepeated}</td></tr>`
-                        highest = value.vote
-                        highestReq.push(value.candidateName)
-                        console.log("PUSHED DATA TO HIGHESTREQ", highestReq)
+                //Logic to display score
+                for (let index = 0; index < candidateList.length; index++) {
+                    const element = candidateList[index];
+                    if (intervalRepeated < element.vote) {
+                        $("#voteResultTableView").innerHTML += `<tr><td>${element.candidateName}</td><td>${intervalRepeated}</td></tr>`
                     } else {
-                        $("#voteResultTableView").innerHTML += `<tr><td>${value.candidateName}</td><td>${value.vote}</td></tr>`
+                        $("#voteResultTableView").innerHTML += `<tr><td>${element.candidateName}</td><td>${element.vote}</td></tr>`
+
                     }
-                })
-                if (intervalRepeated >= highest) {
-                    showResult(highestReq)
-                    console.log("VOTE OK",highestReq)
+                }
+                //Logic to fetch highscores.
+                let highest = {num: 0, obj: []}
+                for (let index = 0; index < candidateList.length; index++) {
+                    const element = candidateList[index];
+                    if (highest.num < element.vote) {
+                        highest.num = element.vote
+                        highest.obj = [element.candidateName]
+                    } else if (highest.num == element.vote) {
+                        highest.obj.push(element.candidateName)
+                    }
+                }
+                if (intervalRepeated >= highest.num || highest.num == 0) {
+                    showResult(highest.obj)
+                    console.log("VOTE OK",highest.obj)
                     clearInterval(resultinterval)
                 } else {
+                    console.log("HIGHEST VALUE", highest.num, "INTERVALVALUE", intervalRepeated)
                     highest = 0;
                     highestReq = [];
                 }
@@ -255,7 +266,7 @@ function voteCompleteHandler() {
 function showResult(highestReq) {
     if (highestReq.length == 1) {
         Swal.fire({
-            title: "최종 우승자",
+            title: "최다 득표 항목",
             html: "<h1>" + highestReq[0] +"</h1>"
         })
     } else {
@@ -264,7 +275,7 @@ function showResult(highestReq) {
             if (index + 1 == highestReq.length) {
                 finalText += value
                 Swal.fire({
-                    title: "최종 우승자",
+                    title: "최다 득표 항목",
                     html: "<h1>" + finalText + "</h1>"
                 })
             } else {
