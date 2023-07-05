@@ -1,4 +1,4 @@
-const { BrowserWindow} = require('electron')
+const { BrowserWindow, Menu } = require('electron')
 const path = require('path')
 
 function createHelpWindow() {
@@ -6,7 +6,13 @@ function createHelpWindow() {
         width: 800,
         height: 600
     })
-
+    helpWindow.setMenu(Menu.buildFromTemplate([{
+        label: "파일",
+        submenu: [{
+            label: "끝내기",
+            click: () => {helpWindow.close()}
+        }]
+    }]))
     helpWindow.loadFile("doc/index.html")
 }
 

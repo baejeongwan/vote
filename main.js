@@ -2,13 +2,16 @@ const { app, BrowserWindow, Menu, ipcMain, dialog } = require('electron')
 const path = require('path')
 const fs = require('fs')
 //const settings = require('electron-settings')
-const { autoUpdater } = require("electron-updater")
 const progressbar = require('electron-progressbar')
+const updateRunner = require("./modules/updateRunner")
 
 //DEVELOPMENT ONLY - Add electron reloader
 try {
     require('electron-reloader')(module)
 } catch {}
+
+//VAR LOADER
+let runtimeconf = require("./modules/runTimeConfManager").readRuntimeConfig()
 
 //#region Window Loader
 
@@ -18,7 +21,8 @@ function createWindow () {
         width: 800,
         height: 600,
         webPreferences: {
-            preload: path.join(__dirname, "preload.js")
+            preload: path.join(__dirname, "preload.js"),
+            devTools: runtimeconf.isDev
         }
     })
 
@@ -31,11 +35,11 @@ function createWindow () {
 //When app is ready...
 app.whenReady().then(function () {
     //set_loader()
-    appupdatechecker()
+    updateRunner.appupdatechecker()
     //Create window..
     createWindow()
     //Set menubar...
-    Menu.setApplicationMenu(appMenu)
+    Menu.setApplicationMenu(require("./modules/menudesign").menuMaker(runtimeconf.isDev))
     //And add handler for macOS, creating window when all windows are closed.
     app.on('activate', function () {
         if (BrowserWindow.getAllWindows().length === 0) {
@@ -44,7 +48,6 @@ app.whenReady().then(function () {
     })
     //Register app as default protocol handler - disabled this since there is no use for this by now
     //app.setAsDefaultProtocolClient("voteandrandom")
-
 })
 
 //When window is all closed...
@@ -58,58 +61,15 @@ app.on('window-all-closed', function () {
 
 //#endregion
 
-
-//#region Menubar
-let appMenu = Menu.buildFromTemplate([
-    {label: "파일", submenu: [
-        /* Temporary blocked
-        {
-            label: "설정",
-            click: function () {
-                require('./additionalWindowLoader').createSettingsWindow()
-            }
-        },*/
-        {
-            type: "separator"
-        },
-        {
-        role: 'quit',
-        label: "끝내기"
-        }
-    ]},
-    {role: 'help', label: "도움", submenu: [
-        {
-            label: "사용설명서",
-            click: function () {
-                require('./additionalWindowLoader').createHelpWindow()
-            }
-        },
-        {
-            label: "제대로 작동하지 않을때 연락해야 할 곳",
-            click: function () {
-                require('electron').dialog.showMessageBoxSync(null, {title: "개발자 연락처", message: "이메일 jayden.bae@outlook.kr\n반,번호,이름: 1반 26번 배정완", type: "info"})
-            }
-        },
-        {
-            label: "정보",
-            click: function () {
-                require('electron').dialog.showMessageBoxSync(null, {message: "배정완이 (10126) 만든 투표 추첨 프로그램\n버전: " + require('electron').app.getVersion() + "\n\n사용해주셔서 감사합니다.", title: "정보", type: 'info'})
-            }
-        },
-        {type: "separator"},
-        {
-            label: "디버거 열기",
-            role: "toggleDevTools"
-        }
-    ]}
-])
-//#endregion
-
 //#region IPC Handlers
 
 //Returns app version when requested with ipcrenderer.invoke
 ipcMain.handle("get-app-version", function (e) {
     return app.getVersion()
+})
+
+ipcMain.handle("is-dev", (e) => {
+    return runtimeconf.isDev
 })
 
 ipcMain.on("save-csv", function (e, arg) {
@@ -125,8 +85,9 @@ ipcMain.on("exit-app", function (e) {
 })
 
 ipcMain.on("check-updates", function (e) {
-    appupdatechecker()
+    updateRunner.appupdatechecker()
 })
+
 //#endregion
 
 
@@ -138,45 +99,5 @@ ipcMain.on("check-updates", function (e) {
         await settings.set("updatechannel", "stable")
     }
 }*/
-
-//#endregion
-
-//#region Updater
-async function appupdatechecker() {
-    let updtprogressbar
-    autoUpdater.addListener("update-available", async (updateinfo) => {
-        let messageforupdate = `* 업데이트 알림 *\n최신 업데이트가 있습니다. 지금 설치하시겠습니까?\n\n===업데이트 정보===\n버전: ${updateinfo.version}\n업데이트 날짜:${updateinfo.releaseDate}\n업데이트 정보: ${updateinfo.releaseNotes.replace(/<[^>]*>/g, '')}\n\n업데이트를 하면 잠시 다운로드가 진행됩니다.\n투표및 뽑기 프로그램은 언제나 안정성, 기능 강화등의 이유로 최신 버전 사용을 권장합니다.`
-        let chosen = await dialog.showMessageBox(null, {title: "최신 업데이트", message: messageforupdate, buttons: ["예, 지금 설치하겠습니다.", "아니요, 다음번에 알려주세요."], type: "question"})
-        if (chosen.response == 0) {
-            updtprogressbar = new progressbar({
-                indeterminate: false,
-                text: "Downloading update...    ",
-                detail: "WAIT...",
-                maxValue: 100
-            })
-            autoUpdater.downloadUpdate()
-        }
-    })
-
-    autoUpdater.addListener("download-progress", (e) => {
-        updtprogressbar.value = e.percent
-        updtprogressbar.detail = e.percent + "% downloaded."
-    })
-
-    autoUpdater.addListener("update-downloaded", async () => {
-        updtprogressbar.close()
-        let chosen = await dialog.showMessageBox(null, {title: "업데이트 준비됨", message: "업데이트 설치가 준비되었습니다. 업데이트를 선택하면 프로그램이 종료된후 업데이트를 진행합니다. 지금 설치하시겠습니까?", buttons: ["예, 프로그램을 종료하고 지금 설치합니다.", "아니요, 나중에 설치하겠습니다."], type: "question"})
-        if (chosen.response == 0) {
-            autoUpdater.quitAndInstall()
-        }
-    })
-
-    autoUpdater.addListener("error", (err) => {
-        dialog.showMessageBox(null, {title: "업데이트 설치중 오류", message: "업데이트 설치중 오류가 발생하였습니다." + err.message, type: "error"})
-    })
-    autoUpdater.autoDownload = false
-    await autoUpdater.checkForUpdatesAndNotify()
-}
-
 
 //#endregion

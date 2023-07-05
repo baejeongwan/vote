@@ -48,6 +48,12 @@ async function splashScreen() {
     **/
     document.getElementById("splash").classList.add("d-none")
     document.getElementById("setUpScreen").classList.remove("d-none")
+    ipcRenderer.invoke("is-dev").then(function (result) {
+        if (result) {
+            document.getElementById("devModeAlert").style.display = "initial"
+            document.getElementById("devModeAlert").classList.add("splash-loading-text")
+        }
+    })
 }
 
 //Wait promise

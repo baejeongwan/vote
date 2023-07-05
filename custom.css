@@ -61,7 +61,7 @@
 }
 
 .splash-loading-text {
-    animation: fadeinandout 1s linear 0s infinite;
+    animation: fadeinandout 3s linear 0s infinite;
 }
 
 @keyframes fadeinandout {
@@ -70,10 +70,19 @@
     }
 
     50% {
-        opacity: 0.5;
+        opacity: 0;
     }
 
     to {
         opacity: 1;
     }
+}
+
+#devModeAlert {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+    color: red;
+    display: none;
 }
