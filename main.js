@@ -35,7 +35,8 @@ function createWindow () {
 //When app is ready...
 app.whenReady().then(function () {
     //set_loader()
-    updateRunner.appupdatechecker()
+    //Update OFF
+    //updateRunner.appupdatechecker()
     //Create window..
     createWindow()
     //Set menubar...
