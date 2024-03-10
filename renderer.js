@@ -5,6 +5,20 @@ let isVoteSuspended = true;
 let totalvoters;
 let voteName;
 
+addEventListenersToBtns()
+
+const jsConfetti = new JSConfetti()
+
+// Register funs to btns
+function addEventListenersToBtns() {
+    $("#createCandidateBtn").addEventListener("click", createCandidate)
+    $("#startVoteBtn").addEventListener("click", startVote)
+    $("#resetCandidateBtn").addEventListener("click", resetCandidate)
+    $("#createPossibleBtn").addEventListener("click", createPossible)
+    $("#resetPossibleBtn").addEventListener("click", resetPossible)
+    $("#startRandomBtn").addEventListener("click", startRandom)
+}
+
 //Create candidate function
 function createCandidate() {
     if (candidateNum >= 9) {
@@ -17,7 +31,7 @@ function createCandidate() {
     } else {
         let newListItem = document.createElement("li")
         newListItem.classList.add("list-group-item", "d-flex")
-        newListItem.innerHTML = `<input type="text" placeholder="선택지 / 후보 입력" class="form-control"><button class="button-not-button" onclick="deleteCandidate(${candidateNum})"><i class="bi bi-x-lg"></i></button>`
+        newListItem.innerHTML = `<input type="text" placeholder="선택지 / 후보 입력" class="form-control"><button class="button-not-button" id="delete-candidate-${candidateNum}" onclick="deleteCandidate(${candidateNum})"><i class="bi bi-x-lg"></i></button>`
         $("#candidate-list-group").appendChild(newListItem)
         candidateNum++;
         giveNewIDNumber();
@@ -59,7 +73,7 @@ function deleteCandidate(id) {
 
 function giveNewIDNumber() {
     document.querySelectorAll("#candidate-list-group>li.list-group-item>button").forEach(function (value, index) {
-        value.setAttribute("onclick", "deleteCandidate(" + index + ")")
+        value.setAttribute("onclick", `deleteCandidate(${index})`)
     })
 }
 
@@ -232,9 +246,10 @@ function voteCompleteHandler() {
                     console.log("HIGHEST VALUE", highest.num, "INTERVALVALUE", intervalRepeated)
                     highest = 0;
                     highestReq = [];
+                    document.getElementById("countup_sndeffect").play()
                 }
                 intervalRepeated++;
-            }, 1000);
+            }, 2000);
         }
     )
     /*Swal.fire({
@@ -283,6 +298,7 @@ function showResult(highestReq) {
             }
         })
     }
+    jsConfetti.addConfetti()
 }
 
 function saveVoteResult() {
@@ -302,7 +318,7 @@ let possibleNum = 0;
 function createPossible() {
     let newListItem = document.createElement('li')
     newListItem.classList.add("list-group-item", "d-flex")
-    newListItem.innerHTML = `<input type="text" placeholder="선택지 / 후보 입력" class="form-control"><button class="button-not-button" onclick="deletePossible(${possibleNum})"><i class="bi bi-x-lg"></i></button>`
+    newListItem.innerHTML = `<input type="text" placeholder="선택지 / 후보 입력" class="form-control"><button class="button-not-button" id="delete-possible-${possibleNum}" onclick="deletePossible(${possibleNum})"><i class="bi bi-x-lg"></i></button>`
     $("#possible-list-group").appendChild(newListItem)
     possibleNum++;
     giveNewRandomIDNumber();
@@ -310,7 +326,7 @@ function createPossible() {
 
 function giveNewRandomIDNumber() {
     document.querySelectorAll("#possible-list-group>li.list-group-item>button").forEach(function (value, index) {
-        value.setAttribute("onclick", "deletePossible(" + index + ")")
+        value.setAttribute("onclick", `deletePossible(${index})`)
     })
 }
 

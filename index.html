@@ -10,7 +10,8 @@
         <link rel="stylesheet" href="./custom.css">
     </head>
     <body>
-        <audio src="./sound/soundeffect.wav" id="sndeffect"></audio>
+        <audio src="./sound/soundeffect.mp3" id="sndeffect" preload="auto"></audio>
+        <audio src="./sound/countup.mp3" id="countup_sndeffect" preload="auto"></audio>
         <h1 id="devModeAlert">개발 모드입니다. 불안정할수있습니다.</h1>
         <div class='container'>
             <div id="splash">
@@ -45,9 +46,9 @@
                             </div>
                             -->
                         </div>
-                        <button class="btn btn-primary btn-lg mt-2" onclick="createCandidate()">후보 / 선택지 추가</button>
-                        <button class="btn btn-primary btn-lg mt-2" onclick="startVote()">투표 시작</button>
-                        <button class="btn btn-danger btn-lg mt-2" onclick="resetCandidate()">리셋</button>
+                        <button class="btn btn-primary btn-lg mt-2" id="createCandidateBtn">후보 / 선택지 추가</button>
+                        <button class="btn btn-primary btn-lg mt-2" id="startVoteBtn">투표 시작</button>
+                        <button class="btn btn-danger btn-lg mt-2" id="resetCandidateBtn">리셋</button>
                     </div>
                     <div class="tab-pane fade" id="randomTabPane" role="tabpanel" aria-labelledby="random-tab" tabindex="0">
                         <h1>추첨모드</h1>
@@ -59,9 +60,9 @@
                         <label for="random-name">추첨명</label>
                         <input type="text" id="random-name" placeholder="추첨명" class="form-control">
                         <ul class="list-group mt-2" id="possible-list-group"></ul>
-                        <button class="btn btn-primary btn-lg mt-2" onclick="createPossible()">후보 / 선택지 추가</button>
-                        <button class="btn btn-primary btn-lg mt-2" onclick="startRandom()">뽑기 시작</button>
-                        <button class="btn btn-danger btn-lg mt-2" onclick="resetPossible()">리셋</button>
+                        <button class="btn btn-primary btn-lg mt-2" id="createPossibleBtn" onclick="createPossible()">후보 / 선택지 추가</button>
+                        <button class="btn btn-primary btn-lg mt-2" id="startRandomBtn" onclick="startRandom()">뽑기 시작</button>
+                        <button class="btn btn-danger btn-lg mt-2" id="resetPossibleBtn" onclick="resetPossible()">리셋</button>
                     </div>
                 </div>
             </div>
@@ -91,6 +92,7 @@
             </div>
         </div>
         <script src="./node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="./node_modules/js-confetti/dist/js-confetti.browser.js"></script>
         <script src="./node_modules/sweetalert2/dist/sweetalert2.all.min.js"></script>
         <script src="./renderer.js"></script>
     </body>
